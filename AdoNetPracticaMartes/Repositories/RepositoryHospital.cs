@@ -9,31 +9,32 @@ using System.Diagnostics.Metrics;
 using System.Numerics;
 using System.Reflection;
 using System.Text;
+using static System.ComponentModel.Design.ObjectSelectorEditor;
 
 #region STORED PROCEDURES
-//alter procedure SP_EMPLEADOS_HOSPITAL_OUT
-//(@nombreHospital nvarchar(50),
-//    @suma int OUT,
-//    @media int OUT,
-//    @personas int OUT)
-//as
-
-//	select  @suma = isnull(SUM(PLANTILLA.SALARIO + DOCTOR.SALARIO),0), @media = isnull(AVG(PLANTILLA.SALARIO + DOCTOR.SALARIO), 0), @personas = COUNT(PLANTILLA.APELLIDO + DOCTOR.APELLIDO) from PLANTILLA
-//	inner join DOCTOR
-//	on PLANTILLA.HOSPITAL_COD = DOCTOR.HOSPITAL_COD
-//	where PLANTILLA.HOSPITAL_COD = (
-//	select HOSPITAL_COD from HOSPITAL where NOMBRE=@nombreHospital)
-//	print @suma;
-//print @media;
-//print @personas;
-
-//select APELLIDO, ESPECIALIDAD, SALARIO 
-//	from DOCTOR where HOSPITAL_COD=(select HOSPITAL_COD from HOSPITAL where NOMBRE=@nombreHospital)
-//	union
-//	select APELLIDO, FUNCION, SALARIO 
-//	from PLANTILLA where HOSPITAL_COD=(select HOSPITAL_COD from HOSPITAL where NOMBRE=@nombreHospital)
-
-//go
+//alter PROCEDURE SP_EMPLEADOS_HOSPITAL_OUT
+//(@nombreHospital NVARCHAR(50)
+//, @suma INT OUT
+//, @media INT OUT
+//, @personas INT OUT)
+//AS
+//BEGIN
+//    DECLARE @idhosp INT;
+//SELECT @idhosp = HOSPITAL_COD FROM HOSPITAL
+//    WHERE NOMBRE = @nombreHospital;
+//SELECT HOSPITAL_COD, APELLIDO, FUNCION, SALARIO FROM PLANTILLA
+//    WHERE HOSPITAL_COD = @idhosp
+//    UNION ALL
+//    SELECT HOSPITAL_COD, APELLIDO, ESPECIALIDAD AS FUNCION, SALARIO FROM DOCTOR
+//    WHERE HOSPITAL_COD = @idhosp;
+//SELECT @suma = isnull(SUM(SALARIO), 0),
+//@media = isnull(AVG(SALARIO), 0),
+//@personas = COUNT(*) FROM
+//    (SELECT SALARIO FROM PLANTILLA WHERE HOSPITAL_COD = @idhosp
+//     UNION ALL
+//     SELECT SALARIO FROM DOCTOR WHERE HOSPITAL_COD = @idhosp) AS TOTAL;
+//END
+//GO
 #endregion
 
 namespace AdoNetPracticaMartes.Repositories
@@ -99,7 +100,7 @@ namespace AdoNetPracticaMartes.Repositories
             while(await this.reader.ReadAsync())
             {
                 string apellido = this.reader["APELLIDO"].ToString();
-                string especialidad = this.reader["ESPECIALIDAD"].ToString();
+                string especialidad = this.reader["FUNCION"].ToString();
                 int salario = int.Parse(this.reader["SALARIO"].ToString());
                 empleado.Apellido.Add(apellido);
                 empleado.Especialidad.Add(especialidad);
