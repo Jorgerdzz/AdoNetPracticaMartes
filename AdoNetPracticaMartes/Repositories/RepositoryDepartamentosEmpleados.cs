@@ -15,21 +15,35 @@ using System.Text;
 //go
 
 //alter procedure SP_LOAD_DATOS_DEPARTAMENTO
-//(@nombreDepartamento nvarchar(50),
-//    @id int,
-//    @nombre nvarchar(50),
-//    @localidad nvarchar(50))
+//(@nombreDepartamento nvarchar(50))
 //as
 
-//	select @id = DEPT_NO, @nombre = DNOMBRE, @localidad = LOC from DEPT where DNOMBRE = @nombreDepartamento
-
-//	select * from EMP
+//	select * from DEPT where DNOMBRE = @nombreDepartamento
+	
+//	select APELLIDO from EMP
 //	inner join DEPT
 //	on EMP.DEPT_NO = DEPT.DEPT_NO 
 //	where DEPT.DNOMBRE = @nombreDepartamento
 
 //go
 
+//alter procedure SP_INSERT_DEPARTAMENTO
+//(@id int, @nombre nvarchar(50), @localidad nvarchar(50))
+//as
+//	insert into DEPT values(@id, @nombre, @localidad)
+//go
+
+//create procedure SP_LOAD_DATOS_EMPLEADO
+//(@apellido nvarchar(50))
+//as
+//	select APELLIDO, OFICIO, SALARIO from EMP where APELLIDO = @apellido
+//go
+
+//ALTER procedure SP_UPDATE_EMPLEADO
+//(@apellido nvarchar(50), @nuevoApellido nvarchar(50), @oficio nvarchar(50), @salario int)
+//as
+//	update EMP set APELLIDO=@nuevoApellido, OFICIO = @oficio, SALARIO = @salario where APELLIDO=@apellido
+//go
 #endregion
 
 namespace AdoNetPracticaMartes.Repositories
